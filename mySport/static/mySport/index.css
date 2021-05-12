@@ -1,0 +1,46 @@
+#tableEntry{
+    text-decoration: none;
+    color: black;
+}
+body{
+    overflow-y: auto;
+}
+
+#test {
+    color: red;
+}
+.span3{
+    height: 200px !important;
+    overflow: scroll;
+}
+#header-fixed { 
+    position: fixed; 
+    top: 0px; display:none;
+    background-color:white;
+}
+#extraInfo{
+    color: black;
+    font-size: smaller;
+}
+
+table.floatThead-table {
+  border-top: none;
+  border-bottom: none;
+  background-color: #fff;
+}
+.container2 {
+	width:100%;
+	height:auto;
+	padding:1%;
+}
+
+.logoDetails {
+   float:left; 
+   max-height:125px;
+   max-width:150px;	
+   width: fit-content;
+   height:fit-content;
+} 
+ul.suggestions{
+    list-style-type: None;
+}

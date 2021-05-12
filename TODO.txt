@@ -1,0 +1,107 @@
+OK...
+use both basketball web scrapers
+from basketball_reference_scraper.teams import get_roster, get_team_stats, get_opp_stats, get_roster_stats, get_team_misc
+from PandasBasketball import pandasbasketball as pb
+STEPS:
+Thursday/friday
+populate DB with data
+Find a way to automate DB fill
+Sunday:
+finish DB population and work on presentation
+get view for viewing players to work
+********************************************
+POPULATING DB WITH DATA
+********************************************
+use scraper to populate mySport_team with team names DONE
+
+
+******CURRENTLY USING PANDAS BBALL to populate tables *************
+use scraper to populate mySport_player with player names (might need to remove age) DONE
+
+
+use scraper to populate teamSeasonStates map teamName to teamID add season to table (from team table)
+
+>>> q = Player.objects.get(pk=19743)
+>>> q.playerseasonstats_set.all() (to get the related entries)
+
+
+Changing way I create entries in DB instead of using loaddata objects are created and inserted into DB via:
+`python manage.py populateDB`
+
+
+DBIDeas
+view for aggregate stats on specific teams
+trigger to run a python script to populate DB
+
+
+TO get query functionality working I need to use GET methods to get the information to provide the proper view
+almost all the functionality must be handled serverside
+
+use pb.get_team() to get team stats for team detail page
+
+*******************************************************
+IMPROVEMENTS
+*******************************************************
+Current way of populating DB is inadqueate: hardcoded values
+GOT info from https://www.basketball-reference.com/players/b/ reading it as CSV and combining all letters
+instead should use a scraper to get this info (that way it'll still be valid next year with new rookies)
+==========================================================================================================
+****Make it deployable on any machine
+
+***Multi thread DB population to reduce time takes to fill DB
+
+**Add a page for current season stastics
+
+*I could use a view to calculate aggregate stats for team info ]
+example: seasons in NBA, #of winning seasons #of playoff apperances
+
+*******************************************************
+Schedule
+*******************************************************
+---------
+---WED---
+--------
+Work on getting query functionality and displaying player details 
+and team display
+
+
+
+
+Original DB population takes ~20 minutes
+
+FINAL TODO::
+ADD PICTURES TO DB... DONE
+use trigger to repopulate DB ... IMpossible can't set a trigger to be executed unless an action occurs in DB (hence can't use it to update daily)
+create view for aggrgate team stastics DONE
+
+.... it doesn't look like i can have a trigger that gets triggered every 24 hours
+instead make trigger that if a player is deleted all related playerseasonStats are also deleted.
+use imagefield instead of Blob for images due to the size of each image and amount of images stored wouldn't make sense to 
+store the images as a blob especially due to the nature of how images are used in HTML storing a URL is much more space efficient
+and easier to program.
+
+I had to create the view with SQL and then create a model for it so that Django would know what object within the DB I was reffering to
+The SQL i used to create the view in the Database:
+```
+SELECT row_number() OVER () as id,
+t.team_id,
+sum(case when t.wins >= t.losses then 1 else 0 end) AS winningSeasons,
+sum(case when t.losses > t.wins then 1 else 0 end) AS losingSeasons,
+sum(case when playoffs == "Won Finals" then 1 else 0 end) AS championshipsWon,
+sum(case when playoffs == "Won Finals" or playoffs == "Lost Finals" then 1 else 0 end) AS championshipApps,
+count(season) AS yearsInLeague
+FROM mySport_teamseasonstats as t
+GROUP BY team_id
+```
+player view:
+SELECT row_number() OVER () as id,
+p.player_id,
+ROUND(AVG (p.APG), 1) AS averageASSISTS,
+ROUND(AVG(P.TOV), 1) as averageTO,
+ROUND(AVG(P.SPG), 1) as averageSteals,
+ROUND(AVG(P.BPG), 1) as averageBlocks,
+ROUND(AVG(p.PPG), 1) as averagePoints
+FROM mySport_playerseasonstats as p
+GROUP BY player_id
+
+
