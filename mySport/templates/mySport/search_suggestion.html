@@ -37,7 +37,7 @@
       <p>{{ error_message }}</p>
       {% endif %}
       {% for player in players %}
-      <li> <a href="{% url 'mySport:detail' player.id %}"><img src= "{{ player.picture }}" width="100px" height="100px"> {{ player.full_name }} </a></li>
+      <li> <a href="{% url 'mySport:detail' player.id %}"><img src= "{{ player.picture }}" width="75px" height="100px"> {{ player.full_name }} </a></li>
         {% endfor %}
         {% for team in teams %}
       <li><a href="{% url 'mySport:teamDetail' team.id %}"> <img src= "{{ team.logo }}" width="100px" height="100px">{{ team.team_name }} </a></li>
